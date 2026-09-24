@@ -98,7 +98,7 @@ view model =
 motionNode : Int -> String -> Model -> Html Msg
 motionNode index label model =
     div
-        (List.map (Html.Attributes.map MotionMsg) (Motion.attributes Motion.defaultConfig model.motion index))
+        (Motion.attributes MotionMsg Motion.defaultConfig model.motion index)
         [ text label ]
 
 
