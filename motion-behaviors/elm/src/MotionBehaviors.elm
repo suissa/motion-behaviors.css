@@ -162,8 +162,8 @@ isFinished model =
     model.phase == Finished
 
 
-attributes : Config -> Model -> Int -> List (Attribute Msg)
-attributes config model itemIndex =
+attributes : (Msg -> parentMsg) -> Config -> Model -> Int -> List (Attribute parentMsg)
+attributes wrap config model itemIndex =
     case itemAt itemIndex model.items of
         Nothing ->
             [ style "display" "none" ]
@@ -207,7 +207,7 @@ attributes config model itemIndex =
                             Entering ->
                                 [ class config.animatedClass
                                 , class (animationClass item.enter)
-                                , onAnimationEnd
+                                , onAnimationEnd wrap
                                 ]
 
                             Exiting ->
@@ -215,7 +215,7 @@ attributes config model itemIndex =
                                     Just exitName ->
                                         [ class config.animatedClass
                                         , class (animationClass exitName)
-                                        , onAnimationEnd
+                                        , onAnimationEnd wrap
                                         ]
 
                                     Nothing ->
@@ -232,9 +232,9 @@ attributes config model itemIndex =
                 ++ phaseAttrs
 
 
-onAnimationEnd : Attribute Msg
-onAnimationEnd =
-    on "animationend" (Decode.succeed AnimationEnded)
+onAnimationEnd : (Msg -> parentMsg) -> Attribute parentMsg
+onAnimationEnd wrap =
+    on "animationend" (Decode.succeed (wrap AnimationEnded))
 
 
 finishAttributes : Finish -> List (Attribute msg)
