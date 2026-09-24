@@ -5,8 +5,12 @@
   "type": "module",
   "exports": {
     ".": "./index.ts",
+    "./browser": "./browser.js",
     "./react": "./react.tsx",
     "./core": "./core.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
     "react": ">=18"
