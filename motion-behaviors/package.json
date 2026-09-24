@@ -1,0 +1,19 @@
+{
+  "name": "@suissa/motion-behaviors",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./react": "./react.tsx",
+    "./core": "./core.ts"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "react": "^19.0.0",
+    "typescript": "^5.9.0"
+  }
+}

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>motion-behaviors.css — all possibilities</title>
+  <link rel="stylesheet" href="../animate.min.css" />
+  <style>
+    body{font-family:system-ui,sans-serif;max-width:980px;margin:40px auto;padding:0 20px;background:#111;color:#eee}
+    section{border:1px solid #333;border-radius:14px;padding:20px;margin:20px 0;min-height:140px}
+    .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.box{padding:18px;border-radius:10px;background:#222}
+    button{padding:10px 14px} code{color:#ffd43b}
+  </style>
+</head>
+<body>
+  <h1>motion-behaviors.css</h1>
+  <p>Declarative orchestration over animate.css.</p>
+
+  <section>
+    <h2>1. page-loaded + sequence + last</h2>
+    <div class="row">
+      <div class="box" data-behavior="animate el-in el-out" data-motion-group="default">zoomInDown → wait → zoomOutDown</div>
+      <div class="box" data-behavior="animate el-in el-out" data-motion-group="default" data-motion-in="fadeInUp" data-motion-out="fadeOutDown">per-element override</div>
+      <div class="box" data-behavior="animate el-in last" data-motion-group="default" data-motion-in="bounceIn">last → visible</div>
+    </div>
+    <button id="replay">Replay</button>
+  </section>
+
+  <section>
+    <h2>2. wait override + finish=remove</h2>
+    <div class="box" data-behavior="animate el-in el-out" data-motion-group="remove" data-motion-in="lightSpeedInRight" data-motion-out="hinge" data-motion-wait="800ms" data-motion-finish="remove">I will be removed</div>
+    <button id="run-remove">Run</button>
+  </section>
+
+  <section>
+    <h2>3. click trigger</h2>
+    <button id="click-trigger">Trigger animation</button>
+    <div class="box" data-behavior="animate el-in last" data-motion-group="click" data-motion-in="rubberBand">click:#click-trigger</div>
+  </section>
+
+  <section>
+    <h2>4. custom event trigger</h2>
+    <button id="emit-login">Emit User.LoggedIn</button>
+    <div class="box" data-behavior="animate el-in last" data-motion-group="event" data-motion-in="bounceIn">event:User.LoggedIn</div>
+  </section>
+
+  <section id="visibility-target">
+    <h2>5. visible trigger</h2>
+    <div class="box" data-behavior="animate el-in last" data-motion-group="visible" data-motion-in="jackInTheBox">visible:#visibility-target</div>
+  </section>
+
+  <section>
+    <h2>6. finish states</h2>
+    <div class="row">
+      <div class="box" data-behavior="animate el-in last" data-motion-group="finish-visible" data-motion-finish="visible">visible</div>
+      <div class="box" data-behavior="animate el-in last" data-motion-group="finish-hidden" data-motion-finish="hidden">hidden</div>
+      <div class="box" data-behavior="animate el-in last" data-motion-group="finish-remove" data-motion-finish="remove">remove</div>
+    </div>
+    <button id="finish-buttons">Run finish states</button>
+  </section>
+
+  <section>
+    <h2>7. lifecycle events</h2>
+    <pre id="log"></pre>
+  </section>
+
+  <script type="module">
+    import { MotionBehaviors } from "../dist/motion-behaviors.js";
+    const base = { in:"zoomInDown", out:"zoomOutDown", wait:"1.5s", finish:"hidden", lastFinish:"visible" };
+    const main = new MotionBehaviors({ ...base, selector:'[data-motion-group="default"]', start:["page-loaded"] }).init();
+    document.querySelector("#replay").onclick = () => { main.reset("default"); main.run("default"); };
+
+    const remove = new MotionBehaviors({ ...base, selector:'[data-motion-group="remove"]', start:[] });
+    document.querySelector("#run-remove").onclick = () => remove.run("remove");
+
+    new MotionBehaviors({ ...base, selector:'[data-motion-group="click"]', start:["click:#click-trigger"] }).init();
+    new MotionBehaviors({ ...base, selector:'[data-motion-group="event"]', start:["event:User.LoggedIn"] }).init();
+    document.querySelector("#emit-login").onclick = () => window.dispatchEvent(new CustomEvent("User.LoggedIn"));
+    new MotionBehaviors({ ...base, selector:'[data-motion-group="visible"]', start:["visible:#visibility-target"] }).init();
+
+    document.querySelector("#finish-buttons").onclick = () => {
+      ["finish-visible","finish-hidden","finish-remove"].forEach(group => {
+        new MotionBehaviors({ ...base, selector:`[data-motion-group="${group}"]`, start:[] }).run(group);
+      });
+    };
+
+    const log = document.querySelector("#log");
+    ["start","enter","entered","wait","exit","exited","finish"].forEach(name =>
+      document.addEventListener(`motion:${name}`, e => { log.textContent += `${name} #${e.detail.index}\n`; })
+    );
+  </script>
+</body>
+</html>
