@@ -52,7 +52,7 @@ export class MotionBehaviors {
   }
 
   init(): this {
-    const triggers = this.config.start?.length ? this.config.start : ["page-loaded"];
+    const triggers = this.config.start ?? ["page-loaded"];
     for (const trigger of triggers) this.bindTrigger(trigger);
     return this;
   }
