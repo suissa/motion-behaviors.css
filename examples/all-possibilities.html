@@ -65,7 +65,7 @@
   </section>
 
   <script type="module">
-    import { MotionBehaviors } from "../dist/motion-behaviors.js";
+    import { MotionBehaviors } from "../motion-behaviors/browser.js";
     const base = { in:"zoomInDown", out:"zoomOutDown", wait:"1.5s", finish:"hidden", lastFinish:"visible" };
     const main = new MotionBehaviors({ ...base, selector:'[data-motion-group="default"]', start:["page-loaded"] }).init();
     document.querySelector("#replay").onclick = () => { main.reset("default"); main.run("default"); };
